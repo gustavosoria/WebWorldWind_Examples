@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- This is a very simple example of using Web World Wind and OpenStreetMap. -->
+<html>
+<head lang="en">
+  <meta name="description" content="This is a very simple example of using NASA Web World Wind">
+  <meta charset="UTF-8">
+  <title>World Wind Example</title>
+  
+  <!-- Include the Web World Wind library. -->
+  <!-- See: http://worldwindserver.net/webworldwind/api-doc/index.html -->
+  <script src="http://worldwindserver.net/webworldwind/worldwindlib.js" type="text/javascript"></script>
+</head>
+<body>
+  <!-- Make the globe window 90% of the screen height 
+  to leave room for a footer -->
+  <div style="height: 90vh">
+    <!-- Create a canvas for Web World Wind. -->
+    <canvas id="canvasOne" style="width: 100%; height: 100%"> 
+      <h2>Try the latest Chrome or FireFox browsers.</h2>
+      <p>Your browser does not support HTML5 Canvas.</p>
+      <p>The Globe cannot be displayed.</p>
+    </canvas>
+  </div>
+  <div>
+    <h3><a href="http://worldwindserver.net/webworldwind/api-doc/index.html" target="_blank">NASA World Wind API Documentation</a></h3>
+  </div>
+  <script>
+    // Register an event listener to be called when the page is loaded.
+    window.addEventListener("load", eventWindowLoaded, false);
+
+    // Define the event listener to initialize Web World Wind.
+    function eventWindowLoaded() {
+      // Create a World Window for the canvas.
+      var wwd = new WorldWind.WorldWindow("canvasOne");
+      
+      // Add some background image layers to the World Window's globe.
+      // wwd.addLayer(new WorldWind.BMNGOneImageLayer());
+      // wwd.addLayer(new WorldWind.BingAerialLayer());
+
+      // Add the OpenStreetMap layer, setting the opacity
+      // to let the background layers show through.
+      var osm = new WorldWind.OpenStreetMapImageLayer();
+      osm.opacity = 0.80;
+      wwd.addLayer(osm);
+
+      // Add a compass, a coordinates display and 
+      // some view controls to the World Window.
+      wwd.addLayer(new WorldWind.CompassLayer());
+      wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
+      wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
+      
+      wwd.navigator.lookAtLocation = new WorldWind.Location(46.06686259487552, 11.120719683053174);
+      wwd.navigator.range = 10000;
+      wwd.navigator.tilt = 31;
+      
+      var _coords = [];
+      _coords.push(new WorldWind.Location(46.06263294030819, 11.125025213310217));
+      _coords.push(new WorldWind.Location(46.07034035776264, 11.132044459615582));
+      _coords.push(new WorldWind.Location(46.05688985320291, 11.13266318401671));
+      _coords.push(new WorldWind.Location(46.0568900882773, 11.114144083837889));
+      _coords.push(new WorldWind.Location(46.047949278890286, 11.119704534346665));
+
+      var pathAttributes = new WorldWind.ShapeAttributes(null);
+
+      pathAttributes.outlineColor = WorldWind.Color.BLUE;
+      pathAttributes.lineWidth = 60;
+
+      console.log(_coords);
+
+      var _line = new WorldWind.SurfacePolyline(_coords, new WorldWind.ShapeAttributes(pathAttributes));
+
+      _line.highlightAttributes = new WorldWind.ShapeAttributes(pathAttributes);
+      _line.visible = true;
+
+      var pathsLayer = new WorldWind.RenderableLayer();
+      pathsLayer.displayName = "Paths";
+      pathsLayer.addRenderable(_line);
+      wwd.addLayer(pathsLayer);
+    }
+  </script>
+</body>
+</html>
